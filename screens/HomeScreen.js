@@ -20,7 +20,7 @@ import allPositions from '../stores/data';
 const MainMapView = React.memo(function MemoMapView({selectedPatient, selectPositions}){
 
   return(
-<MapView
+    <MapView
         key={1}
        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
        style={styles.map}
@@ -91,21 +91,8 @@ const MainMapView = React.memo(function MemoMapView({selectedPatient, selectPosi
   )
 })
 
-function HomeScreen() {
-  const [selectedPatient, setSelectedPatient] = useState(0);
-  const [selectPositions, setSelectedPositions] = useState(null);
-  const [showPatientList, setShowPatientList]= useState(false);
-  const [region, setRegion] = useState(null)
-
+function InfectedInfo({showPatientList, setShowPatientList, selectedPatient, setSelectedPatient, size}){
   const [animated] = useState(new Animated.Value(150));
-
-  useEffect(() => {
-   if(selectedPatient === 0){
-    setSelectedPositions(allPositions);
-   }else{
-    setSelectedPositions([allPositions[selectedPatient - 1]]);
-   }
-  }, [selectedPatient]);
 
   useEffect(() => {
     if(showPatientList){
@@ -120,29 +107,38 @@ function HomeScreen() {
       Animated.timing(
         animated,
         {
-          toValue: 150,
+          toValue: 130,
           time: 1000
         }
       ).start();
     }
   }, [showPatientList]);
 
-  return (
-    <View style={styles.container}>
-      <Animated.View style={{width: 100, height: animated, zIndex: 999,               position: 'absolute',
-              top: 20,
-              right: 20,            backgroundColor: 'white',
-              borderRadius: 20,
-              padding: 10,}}>
+  return(
+    <Animated.View
+        style={{
+          width: 80,
+          height: animated,
+          zIndex: 100,
+          position: 'absolute',
+          top: 20,
+          right: 0,
+          backgroundColor: 'white',
+          borderTopLeftRadius: 10,
+          borderBottomLeftRadius: 10,
+          padding: 10,
+        }}
+      >
         <View style={{alignItems: 'center'}}>
           <Text style={{fontWeight: 'bold'}}>확진자</Text>
           <Text style={{fontSize: 20, paddingVertical: 10}}>27</Text>
           <Text style={{fontWeight: 'bold'}}>완치</Text>
           <Text style={{fontWeight: 'bold'}}>3명</Text>
-          <TouchableOpacity style={{paddingHorizontal: 5}} onPress={() => setShowPatientList(!showPatientList)}>
+          <TouchableOpacity style={{paddingVertical: 5, width: '100%'}} onPress={() => setShowPatientList(!showPatientList)}>
             <Icon name={showPatientList ? 'expand-less' : 'expand-more'} color='black' size={24}/>
           </TouchableOpacity>
         </View>
+
         {
           showPatientList &&
           <ScrollView>
@@ -150,7 +146,7 @@ function HomeScreen() {
                 <Text style={{textAlign: 'center', fontWeight: selectedPatient === 0 ? 'bold' : 'normal'}}>전체</Text>
               </TouchableOpacity>
               {
-                range(1, allPositions.length + 1).map(index => (
+                range(1, size + 1).map(index => (
                   <TouchableOpacity key={index} style={{padding: 5}} onPress={() => setSelectedPatient(index)}>
                     <Text style={{textAlign: 'center', fontWeight: selectedPatient === index ? 'bold' : 'normal'}}>{`${index}번째`}</Text>
                   </TouchableOpacity>
@@ -159,6 +155,73 @@ function HomeScreen() {
           </ScrollView>
         }
       </Animated.View>
+  )
+}
+
+function SuspectedInfo(){
+  const [showSuspection, setShowSuspection] = useState(null)
+
+  return(
+    <Animated.View
+        style={{
+          width: 80,
+          // height: animated,
+          zIndex: 99,
+          position: 'absolute',
+          top: 160,
+          right: 0,
+          backgroundColor: 'white',
+          borderTopLeftRadius: 10,
+          borderBottomLeftRadius: 10,
+          padding: 10,
+        }}
+      >
+        <View style={{flex: 1, alignItems: 'center'}}>
+          <Text style={{fontWeight: 'bold'}}>유증상자</Text>
+          <Text style={{fontSize: 20, paddingVertical: 10}}>2,571</Text>
+          <TouchableOpacity style={{paddingVertical: 5, width: '100%'}} onPress={() => setShowSuspection(!showSuspection)}>
+            <Icon name={showSuspection ? 'expand-less' : 'expand-more'} color='black' size={24}/>
+          </TouchableOpacity>
+        </View>
+        
+        {
+          showSuspection &&
+          <View style={{alignItems: 'center'}}>
+            <Text style={{fontWeight: 'bold'}}>격리해제</Text>
+            <Text style={{}}>1,683명</Text>
+            <Text style={{fontWeight: 'bold'}}>격리 중</Text>
+            <Text style={{}}>888명</Text>
+          </View>
+        }
+      </Animated.View>
+  )
+}
+
+function HomeScreen() {
+  const [selectedPatient, setSelectedPatient] = useState(0);
+  const [selectPositions, setSelectedPositions] = useState(null);
+  const [showPatientList, setShowPatientList]= useState(false);
+
+  useEffect(() => {
+   if(selectedPatient === 0){
+    setSelectedPositions(allPositions);
+   }else{
+    setSelectedPositions([allPositions[selectedPatient - 1]]);
+   }
+  }, [selectedPatient]);
+
+  return (
+    <View style={styles.container}>
+      <InfectedInfo
+        showPatientList={showPatientList}
+        setShowPatientList={setShowPatientList}
+        selectedPatient={selectedPatient}
+        setSelectedPatient={setSelectedPatient}
+        size={allPositions.length}
+      />
+
+      <SuspectedInfo />
+
       <MainMapView selectedPatient={selectedPatient} selectPositions={selectPositions}/>
     </View>
   );
@@ -169,41 +232,6 @@ HomeScreen.navigationOptions = {
 };
 
 export default inject('AppStore')(observer(HomeScreen))
-
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
-      </Text>
-    );
-  }
-}
-
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/development-mode/'
-  );
-}
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-  );
-}
 
 const styles = StyleSheet.create({
   container: {
