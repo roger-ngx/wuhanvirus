@@ -15,7 +15,7 @@ public class MainActivity extends DetachActivity {
 
   @Override
   public String publishedUrl() {
-    return "exp://exp.host/@soon_kmong/LanguageExchange";
+    return "exp://exp.host/@soon_kmong/WuhanVirus";
   }
 
   @Override

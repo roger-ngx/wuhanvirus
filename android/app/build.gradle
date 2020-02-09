@@ -29,7 +29,7 @@ android {
   }
 
   defaultConfig {
-    applicationId 'com.lanex.android'
+    applicationId 'com.wuhan.virus.android'
     minSdkVersion safeExtGet("minSdkVersion", 21)
     targetSdkVersion safeExtGet("targetSdkVersion", 28)
     versionCode 1
@@ -103,7 +103,7 @@ apply from: 'expo.gradle'
 apply from: "../../node_modules/react-native-unimodules/gradle.groovy"
 
 dependencies {
-    implementation project(':react-native-fbsdk')
+    implementation project(':@react-native-community_google-signin')
   implementation fileTree(dir: 'libs', include: ['*.jar'])
 
   implementation 'androidx.multidex:multidex:2.0.0'

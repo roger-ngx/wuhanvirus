@@ -1,7 +1,7 @@
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '10.0'
 
-target 'languageexchange' do
+target 'wuhanvirus' do
   pod 'ExpoKit',
     :git => "http://github.com/expo/expo.git",
     :tag => "ios/2.14.3",
@@ -20,25 +20,6 @@ target 'languageexchange' do
       'expo-payments-stripe',
     ],
   )
-
-  # pod 'React',
-  #   :path => "../node_modules/react-native",
-  #   :inhibit_warnings => true,
-  #   :subspecs => [
-  #     "Core",
-  #     "ART",
-  #     "RCTActionSheet",
-  #     "RCTAnimation",
-  #     "RCTCameraRoll",
-  #     "RCTGeolocation",
-  #     "RCTImage",
-  #     "RCTNetwork",
-  #     "RCTText",
-  #     "RCTVibration",
-  #     "RCTWebSocket",
-  #     "DevSupport",
-  #     "CxxBridge"
-  #   ]
 
   pod 'React', :path => '../node_modules/react-native/'
   pod 'React-Core', :path => '../node_modules/react-native/'
@@ -78,11 +59,11 @@ target 'languageexchange' do
     :podspec => "../node_modules/react-native/third-party-podspecs/glog.podspec",
     :inhibit_warnings => true
 
-  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
-  pod 'RNFBAuth', :path => '../node_modules/@react-native-firebase/auth'
-  pod 'RNFBFirestore', :path => '../node_modules/@react-native-firebase/firestore'
+    pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+    pod 'RNFBAuth', :path => '../node_modules/@react-native-firebase/auth'
+    pod 'RNFBFirestore', :path => '../node_modules/@react-native-firebase/firestore'
 
-  pod 'react-native-fbsdk', :path => '../node_modules/react-native-fbsdk'
+  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-community/google-signin'
 
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';

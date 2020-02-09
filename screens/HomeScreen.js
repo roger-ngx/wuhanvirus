@@ -1,73 +1,165 @@
 import * as WebBrowser from 'expo-web-browser';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Image,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  ScrollView,
+  Picker,
+  TouchableOpacity,
+  Animated
 } from 'react-native';
-
-import { MonoText } from '../components/StyledText';
+import MapView, { PROVIDER_GOOGLE, Marker, Callout, Polyline } from 'react-native-maps';
+import { map, range, get } from 'lodash';
 import { inject } from 'mobx-react';
 import { observer } from 'mobx-react-lite';
+import { Icon } from 'react-native-elements';
+import allPositions from '../stores/data';
 
-function HomeScreen({AppStore}) {
-  AppStore.loginWithFacebook();
+const MainMapView = React.memo(function MemoMapView({selectedPatient, selectPositions}){
+
+  return(
+<MapView
+        key={1}
+       provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+       style={styles.map}
+       region={{
+        latitude: 35.7774758,
+        longitude: 128.0972132,
+        latitudeDelta: 5,
+        longitudeDelta: 5,
+      }}
+      // onRegionChange={setRegion}
+     >
+      {
+        map(selectPositions, (positions, index) => {
+          return map(positions, (position, index1) => (
+          <Marker
+            key={index+''+index1+''+position.date+''+position.title+''+position.latlng[0]+ '' + position.latlng[1]}
+            coordinate={
+              {
+                latitude: position.latlng[0],
+                longitude: position.latlng[1]
+              }
+            }
+            //https://github.com/react-native-community/react-native-maps/issues/1895
+            zIndex={index}
+          >
+            <View 
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 10,
+                backgroundColor: index1 === positions.length - 1 ? 'white' : position.color,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              {
+                index1 === positions.length - 1 &&
+                <Icon reverse type='material' name='local-hospital' color='red' size={20} style={{borderRadius: 10}}/>
+              }
+              {
+                index1 !== positions.length - 1 &&
+                <Text style={{fontWeight: 'bold', color: 'white'}}>{selectedPatient ? selectedPatient : index + 1}</Text>
+              }
+            </View>
+            <Callout>
+              <View style={{backgroundColor: 'white', width: 100}}>
+                <Text>{position.title}</Text>
+                <Text>{position.date}</Text>
+                <Text>{position.address}</Text>
+              </View>
+            </Callout>
+          </Marker>))
+        })
+      }
+      {
+        selectedPatient > 0 &&
+        <Polyline
+          coordinates={
+            map(selectPositions[0], position => ({
+              latitude: position.latlng[0],
+              longitude: position.latlng[1]
+            }))
+          }
+          strokeColor={selectPositions[0][0].color}
+        />
+      }
+     </MapView>
+  )
+})
+
+function HomeScreen() {
+  const [selectedPatient, setSelectedPatient] = useState(0);
+  const [selectPositions, setSelectedPositions] = useState(null);
+  const [showPatientList, setShowPatientList]= useState(false);
+  const [region, setRegion] = useState(null)
+
+  const [animated] = useState(new Animated.Value(150));
+
+  useEffect(() => {
+   if(selectedPatient === 0){
+    setSelectedPositions(allPositions);
+   }else{
+    setSelectedPositions([allPositions[selectedPatient - 1]]);
+   }
+  }, [selectedPatient]);
+
+  useEffect(() => {
+    if(showPatientList){
+      Animated.timing(
+        animated,
+        {
+          toValue: 300,
+          time: 1000
+        }
+      ).start();
+    }else{
+      Animated.timing(
+        animated,
+        {
+          toValue: 150,
+          time: 1000
+        }
+      ).start();
+    }
+  }, [showPatientList]);
+
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.welcomeImage}
-          />
-        </View>
-
-        <View style={styles.getStartedContainer}>
-          <DevelopmentModeNotice />
-
-          <Text style={styles.getStartedText}>{AppStore.appGreeting}</Text>
-
-          <View
-            style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-            <MonoText>screens/HomeScreen.js</MonoText>
-          </View>
-
-          <Text style={styles.getStartedText}>
-            Change this text and your app will automatically reload.
-          </Text>
-        </View>
-
-        <View style={styles.helpContainer}>
-          <TouchableOpacity onPress={handleHelpPress} style={styles.helpLink}>
-            <Text style={styles.helpLinkText}>
-              Help, it didn’t automatically reload!
-            </Text>
+      <Animated.View style={{width: 100, height: animated, zIndex: 999,               position: 'absolute',
+              top: 20,
+              right: 20,            backgroundColor: 'white',
+              borderRadius: 20,
+              padding: 10,}}>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{fontWeight: 'bold'}}>확진자</Text>
+          <Text style={{fontSize: 20, paddingVertical: 10}}>27</Text>
+          <Text style={{fontWeight: 'bold'}}>완치</Text>
+          <Text style={{fontWeight: 'bold'}}>3명</Text>
+          <TouchableOpacity style={{paddingHorizontal: 5}} onPress={() => setShowPatientList(!showPatientList)}>
+            <Icon name={showPatientList ? 'expand-less' : 'expand-more'} color='black' size={24}/>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-
-      <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-          <MonoText style={styles.codeHighlightText}>
-            navigation/MainTabNavigator.js
-          </MonoText>
-        </View>
-      </View>
+        {
+          showPatientList &&
+          <ScrollView>
+              <TouchableOpacity key={0} style={{padding: 5}} onPress={() => setSelectedPatient(0)}>
+                <Text style={{textAlign: 'center', fontWeight: selectedPatient === 0 ? 'bold' : 'normal'}}>전체</Text>
+              </TouchableOpacity>
+              {
+                range(1, allPositions.length + 1).map(index => (
+                  <TouchableOpacity key={index} style={{padding: 5}} onPress={() => setSelectedPatient(index)}>
+                    <Text style={{textAlign: 'center', fontWeight: selectedPatient === index ? 'bold' : 'normal'}}>{`${index}번째`}</Text>
+                  </TouchableOpacity>
+                ))
+              }
+          </ScrollView>
+        }
+      </Animated.View>
+      <MainMapView selectedPatient={selectedPatient} selectPositions={selectPositions}/>
     </View>
   );
 }
@@ -118,6 +210,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  map: {
+    flex: 1,
+  },  
   developmentModeText: {
     marginBottom: 20,
     color: 'rgba(0,0,0,0.4)',

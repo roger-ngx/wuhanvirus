@@ -12,7 +12,7 @@ import host.exp.exponent.Constants;
 public class AppConstants {
 
   public static final String VERSION_NAME = "1.0.0";
-  public static String INITIAL_URL = "exp://exp.host/@soon_kmong/LanguageExchange";
+  public static String INITIAL_URL = "exp://exp.host/@soon_kmong/WuhanVirus";
   public static final String SHELL_APP_SCHEME = "exp6dbc196f66944824bbb0d0ed1388188c";
   public static final String RELEASE_CHANNEL = "default";
   public static boolean SHOW_LOADING_VIEW_IN_SHELL_APP = true;

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "LanguageExchange",
-    "slug": "LanguageExchange",
+    "name": "WuhanVirus",
+    "slug": "WuhanVirus",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
@@ -25,9 +25,9 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lanex.ios",
-      "publishBundlePath": "ios/languageexchange/Supporting/shell-app.bundle",
-      "publishManifestPath": "ios/languageexchange/Supporting/shell-app-manifest.json"
+      "bundleIdentifier": "com.wuhan.virus.ios",
+      "publishBundlePath": "ios/wuhanvirus/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/wuhanvirus/Supporting/shell-app-manifest.json"
     },
     "isDetached": true,
     "detach": {
@@ -36,7 +36,7 @@
     },
     "scheme": "exp6dbc196f66944824bbb0d0ed1388188c",
     "android": {
-      "package": "com.lanex.android",
+      "package": "com.wuhan.virus.android",
       "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
       "publishManifestPath": "android/app/src/main/assets/shell-app-manifest.json"
     }

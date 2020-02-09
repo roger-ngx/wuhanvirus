@@ -5,11 +5,11 @@
   xmlns:tools="http://schemas.android.com/tools">
 
   <permission
-    android:name="com.lanex.android.permission.C2D_MESSAGE"
+    android:name="com.wuhan.virus.android.permission.C2D_MESSAGE"
     android:protectionLevel="signature"/>
 
   <!-- These are required permissions to make the app run -->
-  <uses-permission android:name="com.lanex.android.permission.C2D_MESSAGE" />
+  <uses-permission android:name="com.wuhan.virus.android.permission.C2D_MESSAGE" />
   <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.INTERNET" />
@@ -134,7 +134,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="com.lanex.android" android:path="oauthredirect"/>
+        <data android:scheme="com.wuhan.virus.android" android:path="oauthredirect"/>
       </intent-filter>
     </activity>
 
@@ -148,7 +148,7 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="expo.modules.payments.stripe.d0f12f16-06db-4349-92fc-ad64484858d2" />
+            <data android:scheme="expo.modules.payments.stripe.22fb3b51-6cb2-440e-bf70-f9a2927db22d" />
         </intent-filter>
     </activity>
     <!-- Versioned Activity for Stripe -->
@@ -276,7 +276,7 @@
         <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
         <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
 
-        <category android:name="com.lanex.android"/>
+        <category android:name="com.wuhan.virus.android"/>
       </intent-filter>
     </receiver>
 
@@ -356,7 +356,7 @@
     <meta-data android:name="com.facebook.sdk.AutoInitEnabled" android:value="false"/>
     <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled" android:value="false"/>
 
-    <meta-data android:name="standaloneStripeScheme" android:value="d0f12f16-06db-4349-92fc-ad64484858d2" />
+    <meta-data android:name="standaloneStripeScheme" android:value="22fb3b51-6cb2-440e-bf70-f9a2927db22d" />
   </application>
 
 </manifest>

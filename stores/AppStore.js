@@ -1,6 +1,7 @@
 import { observable, action } from 'mobx';
 import firestore from '@react-native-firebase/firestore';
 import { firebase } from '@react-native-firebase/auth';
+import { forEach, map, compact } from 'lodash';
 
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import { GoogleSignin } from '@react-native-community/google-signin';
@@ -8,13 +9,7 @@ import { GoogleSignin } from '@react-native-community/google-signin';
 class AppStore{
     @observable appGreeting = 'Get started by opening'
 
-    @action testFirestore = async() => {
-        const querySnapshot = await firestore()
-        .collection('houses')
-        .get();
-        
-        console.log(querySnapshot.size);
-    }
+    @action setLocations = locations => this.locations = locations;
 
     @action loginWithFacebook = async() => {
         // Login with permissions
