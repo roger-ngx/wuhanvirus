@@ -1,5 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Platform,
   StyleSheet,
@@ -8,19 +8,21 @@ import {
   ScrollView,
   Picker,
   TouchableOpacity,
-  Animated
+  Animated,
+  Modal,
+  ActivityIndicator
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Callout, Polyline } from 'react-native-maps';
-import { map, range, get } from 'lodash';
+import { map, range, get, compact } from 'lodash';
 import { inject } from 'mobx-react';
 import { observer } from 'mobx-react-lite';
 import { Icon } from 'react-native-elements';
-import allPositions from '../stores/data';
+// import allPositions from '../stores/data';
 
 const MainMapView = React.memo(function MemoMapView({selectedPatient, selectPositions}){
 
   return(
-    <MapView
+    useMemo( () => (<MapView
         key={1}
        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
        style={styles.map}
@@ -84,10 +86,10 @@ const MainMapView = React.memo(function MemoMapView({selectedPatient, selectPosi
               longitude: position.latlng[1]
             }))
           }
-          strokeColor={selectPositions[0][0].color}
+          strokeColor={get(selectPositions, '0.0.color', 'black')}
         />
       }
-     </MapView>
+     </MapView>), [selectPositions])
   )
 })
 
@@ -197,10 +199,20 @@ function SuspectedInfo(){
   )
 }
 
-function HomeScreen() {
+function HomeScreen({AppStore}) {
   const [selectedPatient, setSelectedPatient] = useState(0);
   const [selectPositions, setSelectedPositions] = useState(null);
   const [showPatientList, setShowPatientList]= useState(false);
+  const [allPositions, setAllPositions] = useState([[]]);
+
+  useEffect(() => {
+    getPositions();
+  }, []);
+
+  getPositions = async () => {
+    const result = await AppStore.getPositions();
+    setAllPositions(compact(result));
+  }
 
   useEffect(() => {
    if(selectedPatient === 0){
@@ -208,7 +220,7 @@ function HomeScreen() {
    }else{
     setSelectedPositions([allPositions[selectedPatient - 1]]);
    }
-  }, [selectedPatient]);
+  }, [selectedPatient, allPositions]);
 
   return (
     <View style={styles.container}>
@@ -222,7 +234,16 @@ function HomeScreen() {
 
       <SuspectedInfo />
 
-      <MainMapView selectedPatient={selectedPatient} selectPositions={selectPositions}/>
+      <MainMapView positions={allPositions} selectedPatient={selectedPatient} selectPositions={selectPositions}/>
+
+      <Modal
+        visible={AppStore.appLoading}
+        onRequestClose={()=>false}
+      >
+        <View style={{flex: 1, backgroundColor:'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size='small' color='black'/>
+        </View>
+      </Modal>
     </View>
   );
 }

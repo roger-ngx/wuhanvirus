@@ -7,9 +7,22 @@ import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import { GoogleSignin } from '@react-native-community/google-signin';
 
 class AppStore{
-    @observable appGreeting = 'Get started by opening'
+    @observable appLoading = false;
 
     @action setLocations = locations => this.locations = locations;
+
+    @action getPositions = async() => {
+        this.appLoading = true;
+        const people = await firestore().collection('people').orderBy('createdAt').get();
+        const peopleIds = map(people.docs, person => person.id);
+        const data = Promise.all(map(peopleIds, async id => {
+            const locations = await firestore().collection('people').doc(id).collection('locations').orderBy('order').get();
+            return map(locations.docs, location => location.data());
+        }));
+        this.appLoading = false;
+
+        return data;
+    }
 
     @action loginWithFacebook = async() => {
         // Login with permissions
